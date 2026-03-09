@@ -1,0 +1,280 @@
+﻿@model PerformansSitesi.Web.ViewModels.IKListViewModel
+@{
+    ViewData["Title"] = "İK - Performans Listesi (Kalibrasyon)";
+}
+
+<h4 class="mb-3">İK - Performans Listesi (Kalibrasyon)</h4>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="get" class="mb-3">
+    <!-- İlk Satır: Dönem, Arama, Durum -->
+    <div class="row g-2 align-items-end mb-2">
+        <div class="col-md-3">
+            <label class="form-label small">Dönem</label>
+            <select class="form-select form-select-sm" name="donemId">
+                @foreach (var d in Model.Donemler)
+                {
+                    <option value="@d.DonemId" selected="@(d.DonemId == Model.DonemId)">@d.Ad</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-5">
+            <label class="form-label small">Arama</label>
+            <input class="form-control form-control-sm" type="text" name="arama" value="@Model.Arama"
+                   placeholder="Personel / Sicil / Departman / Müdürlük / 1. Yönetici / 2. Yönetici / Nihai Yönetici" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small">Durum</label>
+            <select class="form-select form-select-sm" name="durumFiltre">
+                <option value="">Tümü</option>
+                <option value="0" selected="@(Model.DurumFiltre == 0)">Değerlendirme Yok</option>
+                <option value="1" selected="@(Model.DurumFiltre == 1)">1. Yönetici</option>
+                <option value="2" selected="@(Model.DurumFiltre == 2)">2. Yönetici</option>
+                <option value="3" selected="@(Model.DurumFiltre == 3)">Nihai Yönetici</option>
+                <option value="4" selected="@(Model.DurumFiltre == 4)">İK / Kalibrasyon</option>
+                <option value="5" selected="@(Model.DurumFiltre == 5)">Tamamlandı</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small">Görev</label>
+            <select class="form-select form-select-sm" name="gorevFiltre">
+                <option value="">Tümü</option>
+                @foreach (var g in Model.GorevListesi)
+                {
+                    <option value="@g" selected="@(Model.GorevFiltre == g)">@g</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- İkinci Satır: Proje, Genel Sonuç, Min Puan, Max Puan, Filtrele, Temizle -->
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">Proje</label>
+            <select class="form-select form-select-sm" name="projeFiltre">
+                <option value="">Tümü</option>
+                @foreach (var p in Model.ProjeListesi)
+                {
+                    <option value="@p" selected="@(Model.ProjeFiltre == p)">@p</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small">Genel Sonuç</label>
+            <select class="form-select form-select-sm" name="genelSonucFiltre">
+                <option value="">Tümü</option>
+                @foreach (var gs in Model.GenelSonucListesi)
+                {
+                    <option value="@gs" selected="@(Model.GenelSonucFiltre == gs)">@gs</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small">Min Puan</label>
+            <input class="form-control form-control-sm" type="number" name="minPuan" value="@Model.MinPuan" min="0" max="100" placeholder="0" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label small">Max Puan</label>
+            <input class="form-control form-control-sm" type="number" name="maxPuan" value="@Model.MaxPuan" min="0" max="100" placeholder="100" />
+        </div>
+
+        <div class="col-md-1 d-grid">
+            <button class="btn btn-secondary btn-sm" type="submit">Filtrele</button>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Index", new { donemId = Model.DonemId })">Filtreleri Temizle</a>
+        </div>
+    </div>
+</form>
+
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <div>
+        <span class="badge bg-light text-dark me-2">
+            Personel Sayısı: @Model.DegerlendirilenSayisi / @Model.ToplamPersonelSayisi
+        </span>
+        <span class="badge bg-dark text-white">
+            Kalibrasyon Aşamasında: @Model.KalibrasyondakiSayisi
+        </span>
+    </div>
+    @if (Model.KalibrasyondakiSayisi > 0 && Model.DurumFiltre == 4)
+    {
+        <div>
+            <button type="button" class="btn btn-success btn-sm" onclick="selectAllKalibrasyon()">Tümünü Seç</button>
+            <button type="button" class="btn btn-warning btn-sm" onclick="clearSelection()">Seçimi Temizle</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="showBulkCompleteModal()">Toplu Tamamla</button>
+        </div>
+    }
+</div>
+
+<table class="table table-sm table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            @if (Model.DurumFiltre == 4)
+            {
+                <th style="width:40px;">
+                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleAllCheckboxes(this)" />
+                </th>
+            }
+            <th>Personel</th>
+            <th>Sicil</th>
+            <th>Departman</th>
+            <th>1. Yönetici</th>
+            <th>2. Yönetici</th>
+            <th>Bölge Müdürü</th>
+            <th>Puan</th>
+            <th>Durum</th>
+            <th style="width:120px;">İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <tr>
+                @if (Model.DurumFiltre == 4)
+                {
+                    <td class="text-center">
+                        @if (r.IsKalibrasyon && r.DegerlendirmeId.HasValue)
+                        {
+                            <input type="checkbox" class="kalibrasyon-checkbox" value="@r.DegerlendirmeId.Value" data-personel="@r.PersonelAd" />
+                        }
+                    </td>
+                }
+                <td>@r.PersonelAd</td>
+                <td>@r.SicilNo</td>
+                <td>@r.Mudurluk</td>
+                <td>@r.Yonetici1Ad</td>
+                <td>@r.Yonetici2Ad</td>
+                <td>@r.NihaiYoneticiAd</td>
+                <td>@(r.ToplamPuan.HasValue? r.ToplamPuan.Value.ToString("0.00") : "-")</td>
+                <td><span class="badge bg-@r.DurumCssClass">@r.DurumMetni</span></td>
+                <td class="text-center">
+                    @if (r.DegerlendirmeId.HasValue)
+                    {
+                        <a class="btn btn-sm btn-primary"
+                           asp-action="ViewForm"
+                           asp-route-degerlendirmeId="@r.DegerlendirmeId.Value">Görüntüle</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Toplu Tamamlama Onay Modal -->
+<div class="modal fade" id="bulkCompleteModal" tabindex="-1" aria-labelledby="bulkCompleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkCompleteModalLabel">Toplu Tamamlama Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold">Aşağıdaki personellerin değerlendirmelerini "Tamamlandı" statüsüne almak üzeresiniz:</p>
+                <div id="selectedPersonelList" class="mb-3"></div>
+                <p class="text-muted">Toplam: <span id="selectedCount" class="fw-bold">0</span> kayıt</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Bu işlem geri alınamaz. Devam etmek istediğinizden emin misiniz?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="submitBulkComplete()">Onayla ve Tamamla</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="bulkCompleteForm" method="post" asp-action="BulkComplete" style="display: none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="donemId" value="@Model.DonemId" />
+    <div id="hiddenInputsContainer"></div>
+</form>
+
+@section Scripts {
+    <script>
+        function toggleAllCheckboxes(source) {
+            const checkboxes = document.querySelectorAll('.kalibrasyon-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+        }
+
+        function selectAllKalibrasyon() {
+            const checkboxes = document.querySelectorAll('.kalibrasyon-checkbox');
+            checkboxes.forEach(cb => cb.checked = true);
+            document.getElementById('selectAllCheckbox').checked = true;
+        }
+
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('.kalibrasyon-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            document.getElementById('selectAllCheckbox').checked = false;
+        }
+
+        function showBulkCompleteModal() {
+            const selectedCheckboxes = document.querySelectorAll('.kalibrasyon-checkbox:checked');
+
+            if (selectedCheckboxes.length === 0) {
+                alert('Lütfen en az bir kayıt seçin.');
+                return;
+            }
+
+            // Seçili personellerin listesini oluştur
+            let personelListHtml = '<ul class="list-group">';
+            selectedCheckboxes.forEach(cb => {
+                const personelName = cb.getAttribute('data-personel');
+                personelListHtml += `<li class="list-group-item">${personelName}</li>`;
+            });
+            personelListHtml += '</ul>';
+
+            document.getElementById('selectedPersonelList').innerHTML = personelListHtml;
+            document.getElementById('selectedCount').textContent = selectedCheckboxes.length;
+
+            // Modal'ı göster
+            const modal = new bootstrap.Modal(document.getElementById('bulkCompleteModal'));
+            modal.show();
+        }
+
+        function submitBulkComplete() {
+            const selectedCheckboxes = document.querySelectorAll('.kalibrasyon-checkbox:checked');
+            const container = document.getElementById('hiddenInputsContainer');
+            container.innerHTML = '';
+
+            // Her seçili değerlendirme ID'si için hidden input oluştur
+            selectedCheckboxes.forEach((cb, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `degerlendirmeIds[${index}]`;
+                input.value = cb.value;
+                container.appendChild(input);
+            });
+
+            // Formu gönder
+            document.getElementById('bulkCompleteForm').submit();
+        }
+    </script>
+}

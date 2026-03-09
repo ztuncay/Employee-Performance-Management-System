@@ -1,0 +1,208 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Sistem Admin Panel";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="display-4">
+                <i class="bi bi-shield-exclamation"></i> Sistem Admin Paneli
+            </h1>
+            <p class="text-muted">Sistem ve veri y�netimi i�in tam kontrol paneli</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Toplam Kullan�c�</h6>
+                    <h3 class="mb-0">@Model.TotalUsers</h3>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small><i class="bi bi-people"></i> Sistem kullan�c�lar�</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Aktif Personel</h6>
+                    <h3 class="mb-0">@Model.ActiveUsers</h3>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small><i class="bi bi-check-circle"></i> �al��an</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Pasif Personel</h6>
+                    <h3 class="mb-0">@Model.InactiveUsers</h3>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small><i class="bi bi-x-circle"></i> Pasif</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <h6 class="card-title">De�erlendirmeler</h6>
+                    <h3 class="mb-0">@Model.TotalEvaluations</h3>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small><i class="bi bi-file-text"></i> Toplam</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Kullan�c� Da��l�m�</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Rol</th>
+                                <th>Say�</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in Model.UsersByRole)
+                            {
+                                <tr>
+                                    <td><strong>@role.Key</strong></td>
+                                    <td><span class="badge bg-info">@role.Value</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-database"></i> Sistem �statistikleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Audit Loglar�:</strong> <span class="badge bg-secondary">@Model.TotalAuditLogs</span></p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Aktif D�nemler:</strong> <span class="badge bg-secondary">@Model.ActivePeriods</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Son 10 Etkinlik Logu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Etkinlik</th>
+                                    <th>Kullan�c�</th>
+                                    <th>Rol</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentLogs.Any())
+                                {
+                                    @foreach (var log in Model.RecentLogs)
+                                    {
+                                        <tr>
+                                            <td><small>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</small></td>
+                                            <td><strong>@log.EventType</strong></td>
+                                            <td>@log.UserName</td>
+                                            <td><span class="badge bg-secondary">@log.UserRole</span></td>
+                                            <td><small>@log.IpAddress</small></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">Log yok</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-tools"></i> Admin Ara�lar�</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <a asp-controller="Kullanici" asp-action="Index" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="bi bi-people-fill"></i> Kullan�c�lar
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-controller="Kullanici" asp-action="Import" class="btn btn-outline-success w-100 mb-2">
+                                <i class="bi bi-file-earmark-arrow-up"></i> Kullan�c� Giri�i
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-controller="Personel" asp-action="Import" class="btn btn-outline-warning w-100 mb-2">
+                                <i class="bi bi-file-earmark-arrow-up"></i> Personel Giri�i
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-controller="Theme" asp-action="Index" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="bi bi-palette"></i> Tema Y�netimi
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-action="SystemLogs" class="btn btn-outline-danger w-100 mb-2">
+                                <i class="bi bi-file-text"></i> Loglar
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-action="DatabaseManager" class="btn btn-outline-info w-100 mb-2">
+                                <i class="bi bi-database"></i> Veritaban�
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a asp-action="Backup" class="btn btn-outline-success w-100 mb-2">
+                                <i class="bi bi-archive"></i> Yedekleme
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

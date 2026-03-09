@@ -1,0 +1,86 @@
+﻿@model PerformansSitesi.Web.ViewModels.PerformansSoruEditViewModel
+@{
+    ViewData["Title"] = "Yeni Soru";
+}
+
+<h4 class="mb-3"><i class="bi bi-plus-circle"></i> Yeni Soru Ekle</h4>
+
+@if (!string.IsNullOrWhiteSpace(Model.Hata))
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i> @Model.Hata
+    </div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label class="form-label">Şablon Id</label>
+            <input class="form-control" asp-for="SablonId" type="number" />
+        </div>
+
+        <div class="col-md-2 mb-3">
+            <label class="form-label">Sıra No</label>
+            <input class="form-control" asp-for="SiraNo" type="number" required />
+        </div>
+
+        <div class="col-md-2 mb-3 d-flex align-items-end">
+            <div class="form-check">
+                <input class="form-check-input" asp-for="ZorunluMu" checked />
+                <label class="form-check-label">Zorunlu</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Kategori / Grup Başlığı</label>
+        <select class="form-select" asp-for="Kategori" required>
+            <option value="">-- Seçiniz --</option>
+            <option value="GÖREV VE SORUMLULUK DEĞERLENDİRMESİ">GÖREV VE SORUMLULUK DEĞERLENDİRMESİ</option>
+            <option value="YETKİNLİK DEĞERLENDİRMESİ">YETKİNLİK DEĞERLENDİRMESİ</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Kategori"></span>
+        <small class="form-text text-muted">Sorunun hangi gruba ait olduğunu belirtin</small>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Soru Başlığı</label>
+        <input class="form-control" asp-for="SoruBaslik" placeholder="örn: 1. İş Disiplini" required />
+        <span class="text-danger" asp-validation-for="SoruBaslik"></span>
+        <small class="form-text text-muted">Kısa ve öz başlık (Excel raporlarında görünecek)</small>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Soru Açıklaması / Metni</label>
+        <textarea class="form-control" asp-for="SoruMetni" rows="4"
+                  placeholder="Sorunun detaylı açıklaması..." required></textarea>
+        <span class="text-danger" asp-validation-for="SoruMetni"></span>
+        <small class="form-text text-muted">Değerlendirme yapılırken gösterilecek açıklama</small>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-save"></i> Kaydet
+        </button>
+        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-sablonId="@Model.SablonId">
+            <i class="bi bi-x-circle"></i> İptal
+        </a>
+    </div>
+</form>
+
+<div class="alert alert-info mt-3">
+    <h6 class="alert-heading"><i class="bi bi-lightbulb"></i> İpuçları</h6>
+    <ul class="mb-0">
+        <li><strong>Sıra No 1-6:</strong> Görev ve Sorumluluk soruları için</li>
+        <li><strong>Sıra No 7-11:</strong> Yetkinlik soruları için</li>
+        <li><strong>Kategori:</strong> Excel raporunda grup başlığı olarak görünür</li>
+        <li><strong>Soru Başlığı:</strong> Numara ile başlık yazın (örn: "6. İş Güvenliği")</li>
+        <li><strong>Soru Metni:</strong> Değerlendirme kriterinin detaylı açıklaması</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

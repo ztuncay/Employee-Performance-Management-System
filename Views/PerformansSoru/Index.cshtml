@@ -1,0 +1,92 @@
+﻿@model List<PerformansSitesi.Domain.Entities.PerformansSorusu>
+@{
+    ViewData["Title"] = "Soru Yönetimi";
+    var sablonId = (int)(ViewBag.SablonId ?? 1);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="m-0"><i class="bi bi-question-circle"></i> Performans Soruları</h4>
+    <a class="btn btn-primary" asp-action="Create" asp-route-sablonId="@sablonId">
+        <i class="bi bi-plus-circle"></i> Yeni Soru
+    </a>
+</div>
+
+<table class="table table-sm table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:60px;">SIRA</th>
+            <th style="width:280px;">KATEGORİ</th>
+            <th style="width:200px;">SORU BAŞLIĞI</th>
+            <th>AÇIKLAMA</th>
+            <th style="width:80px;">ZORUNLU</th>
+            <th style="width:150px;">İŞLEM</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model.OrderBy(x => x.SiraNo))
+        {
+            <tr>
+                <td class="text-center"><strong>@s.SiraNo</strong></td>
+                <td>
+                    <span class="badge @(s.Kategori.Contains("GÖREV") ? "bg-primary" : "bg-info") w-100 text-wrap">
+                        @s.Kategori
+                    </span>
+                </td>
+                <td><strong>@s.SoruBaslik</strong></td>
+                <td style="font-size:13px;">@s.SoruMetni</td>
+                <td class="text-center">
+                    @if (s.ZorunluMu)
+                    {
+                        <span class="badge bg-success">Evet</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Hayır</span>
+                    }
+                </td>
+                <td class="text-center">
+                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@s.SoruId" title="Düzenle">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.SoruId" />
+                        <button class="btn btn-sm btn-danger" type="submit" title="Sil"
+                                onclick="return confirm('Bu soru silinsin mi? (Kullanılmışsa izin vermez)');">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="alert alert-info">
+    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Bilgi</h6>
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="mb-0">
+                <li><strong>Kategori:</strong> Soruların grup başlığı</li>
+                <li><strong>Soru Başlığı:</strong> Kısa başlık (örn: "1. İş Disiplini")</li>
+                <li><strong>Açıklama:</strong> Detaylı soru metni</li>
+                <li><strong>Zorunlu:</strong> Bu soru cevaplanmak zorunda mı?</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <ul class="mb-0">
+                <li><strong>Toplam:</strong> @Model.Count soru</li>
+                <li><strong>Görev ve Sorumluluk:</strong> @Model.Count(x => x.Kategori.Contains("GÖREV")) soru</li>
+                <li><strong>Yetkinlik:</strong> @Model.Count(x => x.Kategori.Contains("YETKİNLİK")) soru</li>
+                <li><strong>Varsayılan:</strong> @Model.Count(x => x.ZorunluMu) soru zorunlu işaretli</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a class="btn btn-outline-secondary" asp-controller="Dashboard" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Dashboard'a Dön
+    </a>
+</div>

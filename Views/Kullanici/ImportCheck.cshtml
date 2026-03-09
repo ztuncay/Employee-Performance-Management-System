@@ -1,0 +1,99 @@
+@model PerformansSitesi.Web.ViewModels.KullaniciImportCheckViewModel
+@{
+    ViewData["Title"] = "Kullan�c� Giri�i �zeti";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2><i class="bi bi-check-circle"></i> Kullan�c� Giri�i Ba�ar�l�</h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-primary btn-sm">
+                <i class="bi bi-arrow-left"></i> Kullan�c�lara D�n
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-success">
+        <strong>Giri�i i�lemi ba�ar�yla tamamland�!</strong>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Yeni Eklenenler</h6>
+                    <h3 class="text-success">@Model.EklenenSayi</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">G�ncellenenler</h6>
+                    <h3 class="text-info">@Model.Guncellenenlerin</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Toplam ��lenen</h6>
+                    <h3 class="text-primary">@(Model.EklenenSayi + Model.Guncellenenlerin)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.YeniKullanicilar.Any())
+    {
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-person-plus"></i> Yeni Eklenen Kullan�c�lar</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ad</th>
+                                <th>Kullan�c� Ad�</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Varsay�lan �ifre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var k in Model.YeniKullanicilar)
+                            {
+                                <tr>
+                                    <td>@k.Ad</td>
+                                    <td><code>@k.KullaniciAdi</code></td>
+                                    <td>@k.Email</td>
+                                    <td><span class="badge bg-secondary">@k.Rol</span></td>
+                                    <td><code>@k.VarsayilanSifre</code></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong>�nemli:</strong> Varsay�lan �ifreler yukar�da g�r�lmektedir. Kullan�c�lara bu bilgileri iletiniz.
+                    �lk giri�te �ifrelerini de�i�tirmeleri �nerilir.
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Kullan�c� Listesine D�n
+        </a>
+        <a asp-action="Import" class="btn btn-outline-secondary">
+            <i class="bi bi-file-earmark-arrow-up"></i> Yeni Giri�i Yap
+        </a>
+    </div>
+</div>

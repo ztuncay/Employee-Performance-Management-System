@@ -1,0 +1,49 @@
+@model PerformansSitesi.Web.ViewModels.DonemFormViewModel
+@{
+    ViewData["Title"] = "Dönem Düzenle";
+}
+
+<h4 class="mb-3">Dönem Düzenle</h4>
+
+@if (!string.IsNullOrWhiteSpace(Model.Hata))
+{
+    <div class="alert alert-danger">@Model.Hata</div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="DonemId" />
+
+    <div class="mb-3">
+        <label class="form-label">Ad</label>
+        <input class="form-control" asp-for="Ad" />
+        <span class="text-danger" asp-validation-for="Ad"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Başlangıç Tarihi</label>
+            <input class="form-control" asp-for="BaslangicTarihi" type="date" />
+            <span class="text-danger" asp-validation-for="BaslangicTarihi"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Bitiş Tarihi</label>
+            <input class="form-control" asp-for="BitisTarihi" type="date" />
+            <span class="text-danger" asp-validation-for="BitisTarihi"></span>
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" asp-for="AktifMi" />
+        <label class="form-check-label">Aktif dönem yap</label>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Kaydet</button>
+        <a class="btn btn-outline-dark" asp-action="Index">İptal</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

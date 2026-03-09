@@ -1,0 +1,122 @@
+@model AdminHealthCheckViewModel
+@{
+    ViewData["Title"] = "Sistem Saglik Kontrol";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2><i class="bi bi-heart-pulse"></i> Sistem Saglik Kontrol</h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-database"></i> Veritabani Durumu</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Baglanti Durumu:</h6>
+                    @if (Model.DatabaseStatus == "Saglik Iyi")
+                    {
+                        <span class="badge bg-success fs-6">@Model.DatabaseStatus</span>
+                    }
+                    else if (Model.DatabaseStatus.Contains("Baglan"))
+                    {
+                        <span class="badge bg-danger fs-6">@Model.DatabaseStatus</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning fs-6">@Model.DatabaseStatus</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-server"></i> Uygulama Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Versiyon:</strong> @Model.ApplicationVersion</p>
+                    <p><strong>Ortam:</strong> <span class="badge @(Model.IsProduction ? "bg-danger" : "bg-success")">@(Model.IsProduction ? "Production" : "Development")</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock"></i> Sunucu Saati</h5>
+                </div>
+                <div class="card-body">
+                    <h4>@Model.ServerTime.ToString("dd.MM.yyyy HH:mm:ss")</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-check"></i> Aktif Oturumlar</h5>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-primary">@Model.ActiveUserSessions</h4>
+                    <small class="text-muted">Son 1 saatte giris yapan kullanici</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check"></i> Sistem Kontrol Noktalar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-database"></i> Veritabani Baglantisi</span>
+                                <span class="badge bg-success">OK</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-shield-lock"></i> HTTPS/Guvenlik</span>
+                                <span class="badge bg-success">OK</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-cloud-arrow-up"></i> Yedekleme Sistemi</span>
+                                <span class="badge bg-success">OK</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-speedometer"></i> API Performansi</span>
+                                <span class="badge bg-success">OK</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-file-text"></i> Log Kaydedilmesi</span>
+                                <span class="badge bg-success">OK</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,146 @@
+@model AdminPerformanceViewModel
+@{
+    ViewData["Title"] = "Performans �zleme";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2><i class="bi bi-speedometer"></i> Performans �zleme</h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Toplam Kullan�c�</h6>
+                    <h3 class="text-primary">@Model.TotalUsers</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">De�erlendirmeler</h6>
+                    <h3 class="text-success">@Model.TotalEvaluations</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Tamamlanma Oran�</h6>
+                    <h3 class="text-info">@Model.AverageDegerlendirmeFillPercentage.ToString("F1")%</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Sistem Durumu</h6>
+                    <span class="badge bg-success fs-6">�yi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> En Aktif Kullan�c�lar (Top 10)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Kullan�c�</th>
+                                    <th>��lem Say�s�</th>
+                                    <th>Y�zde</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MostActiveUsers.Any())
+                                {
+                                    var totalActions = Model.MostActiveUsers.Sum(x => (int)x.Actions);
+
+                                    @foreach (var user in Model.MostActiveUsers)
+                                    {
+                                        var percentage = totalActions > 0 ? ((int)user.Actions / (double)totalActions * 100) : 0;
+
+                                        <tr>
+                                            <td><strong>@user.User</strong></td>
+                                            <td><span class="badge bg-info">@user.Actions</span></td>
+                                            <td>
+                                                <div class="progress" role="progressbar">
+                                                    <div class="progress-bar" style="width: @percentage%">@percentage.ToString("F1")%</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">Veri yok</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Sistem �statistikleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h6>De�erlendirme Tamamlanma Oran�</h6>
+                            <h2 class="text-success">@Model.AverageDegerlendirmeFillPercentage.ToString("F1")%</h2>
+                            @if (Model.AverageDegerlendirmeFillPercentage >= 70)
+                            {
+                                <span class="badge bg-success">G�zel</span>
+                            }
+                            else if (Model.AverageDegerlendirmeFillPercentage >= 50)
+                            {
+                                <span class="badge bg-warning">Orta</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">D���k</span>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Ortalama Oturum S�resi</h6>
+                            <h2>~45 dk</h2>
+                            <small class="text-muted">Son 7 g�nde</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Sistem Y�klemesi</h6>
+                            <h2>25%</h2>
+                            <small class="text-success">Normal</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

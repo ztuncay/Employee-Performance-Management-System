@@ -1,0 +1,450 @@
+@model PerformansSitesi.Web.ViewModels.DashboardViewModel
+@{
+	ViewData["Title"] = "Dashboard";
+
+	var isAdminOrIk = User.IsInRole("Admin") || User.IsInRole("IK");
+	var isSistemAdmin = User.IsInRole("SistemAdmin");
+	var isManager = User.IsInRole("Yonetici1") || User.IsInRole("Yonetici2") || User.IsInRole("NihaiYonetici");
+}
+
+<!-- Tab Bar / Hızlı Erişim Menüsü -->
+<div class="mb-4">
+	<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+
+		<!-- Dashboard -->
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active"
+					id="tab-dashboard"
+					data-bs-toggle="tab"
+					data-bs-target="#pane-dashboard"
+					type="button"
+					role="tab"
+					aria-controls="pane-dashboard"
+					aria-selected="true">
+				<i class="bi bi-speedometer2"></i> Dashboard
+			</button>
+		</li>
+
+		<!-- Yönetim / Değerlendirmelerim (tek sekme, rol bazlı) -->
+		@if (isAdminOrIk || isManager)
+		{
+			<li class="nav-item" role="presentation">
+				<button class="nav-link"
+						id="tab-yonetim"
+						data-bs-toggle="tab"
+						data-bs-target="#pane-yonetim"
+						type="button"
+						role="tab"
+						aria-controls="pane-yonetim"
+						aria-selected="false">
+					@if (isAdminOrIk)
+					{
+						<text><i class="bi bi-gear"></i> Yönetim</text>
+					}
+					else
+					{
+						<text><i class="bi bi-check2-square"></i> Değerlendirmelerim</text>
+					}
+				</button>
+			</li>
+		}
+
+		<!-- Raporlar (Sadece Admin/IK) -->
+		@if (isAdminOrIk)
+		{
+			<li class="nav-item" role="presentation">
+				<button class="nav-link"
+						id="tab-raporlar"
+						data-bs-toggle="tab"
+						data-bs-target="#pane-raporlar"
+						type="button"
+						role="tab"
+						aria-controls="pane-raporlar"
+						aria-selected="false">
+					<i class="bi bi-bar-chart"></i> Raporlar
+				</button>
+			</li>
+		}
+
+		<!-- Sistem Admin -->
+		@if (isSistemAdmin)
+		{
+			<li class="nav-item" role="presentation">
+				<button class="nav-link"
+						id="tab-sistemadmin"
+						data-bs-toggle="tab"
+						data-bs-target="#pane-sistemadmin"
+						type="button"
+						role="tab"
+						aria-controls="pane-sistemadmin"
+						aria-selected="false">
+					<i class="bi bi-shield-exclamation"></i> Sistem Admin
+				</button>
+			</li>
+		}
+	</ul>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content" id="dashboardTabContent">
+
+	<!-- Dashboard Tab -->
+	<div class="tab-pane fade show active" id="pane-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+		<h4 class="mb-3">Dashboard</h4>
+
+		<div class="alert alert-secondary text-dark">
+			<strong>Dönem:</strong> @Model.DonemAd
+		</div>
+
+		<!-- Admin/IK için Genel İstatistikler -->
+		@if (isAdminOrIk)
+		{
+			<div class="mb-4">
+				<h5 class="mb-3"><i class="bi bi-bar-chart"></i> Genel İstatistikler (Tüm Personel)</h5>
+
+				<div class="row g-3 mb-3">
+					<div class="col-md-3">
+						<div class="card">
+							<div class="card-body">
+								<div class="text-muted">Toplam Personel</div>
+								<div style="font-size:28px;font-weight:800;color:#212529">@Model.ToplamPersonel</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card">
+							<div class="card-body">
+								<div class="text-muted">Değerlendirme Başlayan</div>
+								<div style="font-size:28px;font-weight:800;color:#212529">@Model.DegerlendirmeBaslayan</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card">
+							<div class="card-body">
+								<div class="text-muted">Kalibrasyonda</div>
+								<div style="font-size:28px;font-weight:800;color:#212529">@Model.Kalibrasyonda</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card">
+							<div class="card-body">
+								<div class="text-muted">Tamamlanan</div>
+								<div style="font-size:28px;font-weight:800;color:#212529">@Model.Tamamlanan</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-4">
+					<div class="card-header bg-dark text-white">
+						Performans Dağılımı - Genel (Hedef: 15% / 70% / 15%)
+					</div>
+					<div class="card-body">
+						<div class="row g-3">
+							<div class="col-md-6">
+								<canvas id="distChart" height="220"></canvas>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-sm table-bordered align-middle">
+									<thead class="table-light">
+										<tr>
+											<th class="text-dark">Sonuç</th>
+											<th class="text-dark">Adet</th>
+											<th class="text-dark">Yüzde</th>
+											<th class="text-dark">Hedef</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="text-dark">Beklenen Altı</td>
+											<td class="text-dark">@Model.Distribution.BeklenenAlti</td>
+											<td class="text-dark">@Model.Distribution.BeklenenAltiPct%</td>
+											<td class="text-dark">@Model.Distribution.TargetAltiPct%</td>
+										</tr>
+										<tr>
+											<td class="text-dark">Beklenen</td>
+											<td class="text-dark">@Model.Distribution.Beklenen</td>
+											<td class="text-dark">@Model.Distribution.BeklenenPct%</td>
+											<td class="text-dark">@Model.Distribution.TargetPct%</td>
+										</tr>
+										<tr>
+											<td class="text-dark">Beklenen Üstü</td>
+											<td class="text-dark">@Model.Distribution.BeklenenUstu</td>
+											<td class="text-dark">@Model.Distribution.BeklenenUstuPct%</td>
+											<td class="text-dark">@Model.Distribution.TargetUstuPct%</td>
+										</tr>
+									</tbody>
+								</table>
+
+								<div class="alert alert-info text-dark mb-0">
+									Dağılım, <strong>Genel Sonuç</strong> alanı dolu olan değerlendirmeler üzerinden hesaplanır.
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+
+		<!-- Yöneticiler için Bağlı Personel İstatistikleri -->
+		@if (isManager)
+		{
+			<div class="mb-4">
+				<h5 class="mb-3">
+					<i class="bi bi-people"></i> Bağlı Personelim - İstatistikler
+				</h5>
+
+				@if (Model.BagliPersonelSayisi > 0)
+				{
+					<div class="row g-3 mb-3">
+						<div class="col-md-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="text-muted">Bağlı Personel Sayısı</div>
+									<div style="font-size:28px;font-weight:800;color:#212529">@Model.BagliPersonelSayisi</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="text-muted">Başlayan Değerlendirmeler</div>
+									<div style="font-size:28px;font-weight:800;color:#212529">@Model.BagliDegerlendirmeBaslayan</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="text-muted">Kalibrasyonda</div>
+									<div style="font-size:28px;font-weight:800;color:#212529">@Model.BagliKalibrasyonda</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="text-muted">Tamamlanan</div>
+									<div style="font-size:28px;font-weight:800;color:#212529">@Model.BagliTamamlanan</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card">
+						<div class="card-header bg-white text-dark border-bottom border-primary fw-semibold">
+							Performans Dağılımı - Bağlı Personel (Hedef: 15% / 70% / 15%)
+						</div>
+						<div class="card-body">
+							<div class="row g-3">
+								<div class="col-md-6">
+									<canvas id="bagliDistChart" height="220"></canvas>
+								</div>
+								<div class="col-md-6">
+									<table class="table table-sm table-bordered align-middle">
+										<thead class="table-light">
+											<tr>
+												<th class="text-dark">Sonuç</th>
+												<th class="text-dark">Adet</th>
+												<th class="text-dark">Yüzde</th>
+												<th class="text-dark">Hedef</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-dark">Beklenen Altı</td>
+												<td class="text-dark">@Model.BagliDistribution.BeklenenAlti</td>
+												<td class="text-dark">@Model.BagliDistribution.BeklenenAltiPct%</td>
+												<td class="text-dark">@Model.BagliDistribution.TargetAltiPct%</td>
+											</tr>
+											<tr>
+												<td class="text-dark">Beklenen</td>
+												<td class="text-dark">@Model.BagliDistribution.Beklenen</td>
+												<td class="text-dark">@Model.BagliDistribution.BeklenenPct%</td>
+												<td class="text-dark">@Model.BagliDistribution.TargetPct%</td>
+											</tr>
+											<tr>
+												<td class="text-dark">Beklenen Üstü</td>
+												<td class="text-dark">@Model.BagliDistribution.BeklenenUstu</td>
+												<td class="text-dark">@Model.BagliDistribution.BeklenenUstuPct%</td>
+												<td class="text-dark">@Model.BagliDistribution.TargetUstuPct%</td>
+											</tr>
+										</tbody>
+									</table>
+
+									<div class="alert alert-info text-dark mb-0">
+										Dağılım, bağlı personelinin <strong>Genel Sonuç</strong> alanı dolu olan değerlendirmeleri üzerinden hesaplanır.
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				else
+				{
+					<div class="alert alert-warning text-dark">
+						<i class="bi bi-exclamation-triangle"></i>
+						Şu anda size atanmış personel bulunmamaktadır.
+					</div>
+				}
+			</div>
+		}
+	</div>
+
+	<!-- Yönetim / Değerlendirmelerim Tab -->
+	@if (isAdminOrIk || isManager)
+	{
+		<div class="tab-pane fade" id="pane-yonetim" role="tabpanel" aria-labelledby="tab-yonetim">
+			<h4 class="mb-3">
+				@if (isAdminOrIk)
+				{
+					<span>Yönetim Paneli</span>
+				}
+				else
+				{
+					<span>Benim Değerlendirmelerim</span>
+				}
+			</h4>
+
+			<div class="row g-3">
+				@if (isAdminOrIk)
+				{
+					<div class="col-md-6">
+						<a href="@Url.Action("Index", "Personel")" class="btn btn-outline-primary w-100 mb-2">
+							<i class="bi bi-people"></i> Personel Yönetimi
+						</a>
+					</div>
+					<div class="col-md-6">
+						<a href="@Url.Action("Import", "Personel")" class="btn btn-outline-primary w-100 mb-2">
+							<i class="bi bi-file-earmark-arrow-up"></i> Personel Girişi
+						</a>
+					</div>
+					<div class="col-md-6">
+						<a href="@Url.Action("Index", "Donem")" class="btn btn-outline-info w-100 mb-2">
+							<i class="bi bi-calendar"></i> Dönemler
+						</a>
+					</div>
+					<div class="col-md-6">
+						<a href="@Url.Action("Index", "PerformansSoru")" class="btn btn-outline-info w-100 mb-2">
+							<i class="bi bi-question-circle"></i> Sorular
+						</a>
+					</div>
+					<div class="col-md-6">
+						<a href="@Url.Action("Index", "Kullanici")" class="btn btn-outline-warning w-100 mb-2">
+							<i class="bi bi-person-gear"></i> Kullanıcılar
+						</a>
+					</div>
+				}
+				else if (User.IsInRole("Yonetici1"))
+				{
+					<div class="col-md-12">
+						<a href="@Url.Action("Index", "Yonetici1")" class="btn btn-outline-primary w-100 mb-2">
+							<i class="bi bi-check2-square"></i> Değerlendirmelerime Git
+						</a>
+					</div>
+				}
+				else if (User.IsInRole("Yonetici2"))
+				{
+					<div class="col-md-12">
+						<a href="@Url.Action("Index", "Yonetici2")" class="btn btn-outline-primary w-100 mb-2">
+							<i class="bi bi-check2-square"></i> Değerlendirmelerime Git
+						</a>
+					</div>
+				}
+				else if (User.IsInRole("NihaiYonetici"))
+				{
+					<div class="col-md-12">
+						<a href="@Url.Action("Index", "NihaiYonetici")" class="btn btn-outline-primary w-100 mb-2">
+							<i class="bi bi-check2-square"></i> Değerlendirmelerime Git
+						</a>
+					</div>
+				}
+			</div>
+		</div>
+	}
+
+	<!-- Raporlar Tab (Sadece Admin/IK) -->
+	@if (isAdminOrIk)
+	{
+		<div class="tab-pane fade" id="pane-raporlar" role="tabpanel" aria-labelledby="tab-raporlar">
+			<h4 class="mb-3">Raporlar</h4>
+
+			<div class="row g-3">
+				<div class="col-md-6">
+					<a href="@Url.Action("Index", "Reports")" class="btn btn-outline-success w-100 mb-2">
+						<i class="bi bi-bar-chart"></i> Performans Raporları
+					</a>
+				</div>
+			</div>
+		</div>
+	}
+
+	<!-- Sistem Admin Tab -->
+	@if (isSistemAdmin)
+	{
+		<div class="tab-pane fade" id="pane-sistemadmin" role="tabpanel" aria-labelledby="tab-sistemadmin">
+			<h4 class="mb-3">Sistem Admin Paneli</h4>
+
+			<div class="row g-3">
+				<div class="col-md-3">
+					<a href="@Url.Action("Index", "Admin")" class="btn btn-outline-danger w-100 mb-2">
+						<i class="bi bi-shield-exclamation"></i> Admin Dashboard
+					</a>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		(function () {
+			// Genel Dağılım Grafik (Admin/IK)
+			@if (isAdminOrIk)
+			{
+					<text>
+					const ctx = document.getElementById('distChart');
+					if (ctx) {
+						const labels = ['Beklenen Altı', 'Beklenen', 'Beklenen Üstü'];
+						const values = [
+							@Model.Distribution.BeklenenAlti,
+							@Model.Distribution.Beklenen,
+							@Model.Distribution.BeklenenUstu
+						];
+
+						new Chart(ctx, {
+							type: 'bar',
+							data: { labels: labels, datasets: [{ label: 'Adet', data: values, backgroundColor: '#0d6efd' }] },
+							options: { responsive: true, scales: { y: { beginAtZero: true } } }
+						});
+					}
+					</text>
+			}
+
+			// Bağlı Personel Dağılım Grafik (Yöneticiler)
+			@if (isManager)
+			{
+					<text>
+					const bagliCtx = document.getElementById('bagliDistChart');
+					if (bagliCtx) {
+						const bagliLabels = ['Beklenen Altı', 'Beklenen', 'Beklenen Üstü'];
+						const bagliValues = [
+							@Model.BagliDistribution.BeklenenAlti,
+							@Model.BagliDistribution.Beklenen,
+							@Model.BagliDistribution.BeklenenUstu
+						];
+
+						new Chart(bagliCtx, {
+							type: 'bar',
+							data: { labels: bagliLabels, datasets: [{ label: 'Adet', data: bagliValues, backgroundColor: '#0d6efd' }] },
+							options: { responsive: true, scales: { y: { beginAtZero: true } } }
+						});
+					}
+					</text>
+			}
+		})();
+	</script>
+}

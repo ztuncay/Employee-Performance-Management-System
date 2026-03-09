@@ -1,0 +1,80 @@
+@model PerformansSitesi.Web.ViewModels.KullaniciCreateViewModel
+@using PerformansSitesi.Domain.Enums
+@{
+    ViewData["Title"] = "Yeni Kullanıcı";
+}
+
+<h4 class="mb-3"><i class="bi bi-person-plus"></i> Yeni Kullanıcı</h4>
+
+@if (!string.IsNullOrWhiteSpace(Model.Hata))
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i> @Model.Hata
+    </div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Ad Soyad *</label>
+            <input class="form-control" asp-for="AdSoyad" required />
+            <span class="text-danger" asp-validation-for="AdSoyad"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" asp-for="Email" />
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Kullanıcı Adı *</label>
+            <input class="form-control" asp-for="KullaniciAdi" required autocomplete="off" />
+            <span class="text-danger" asp-validation-for="KullaniciAdi"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Şifre *</label>
+            <input class="form-control" type="password" asp-for="Sifre" required autocomplete="new-password" />
+            <span class="text-danger" asp-validation-for="Sifre"></span>
+            <small class="form-text text-muted">En az 4 karakter</small>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Rol *</label>
+            <select class="form-select" asp-for="Rol" asp-items="Html.GetEnumSelectList<Rol>()" required></select>
+            <span class="text-danger" asp-validation-for="Rol"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Bağlı Personel (Opsiyonel)</label>
+            <select class="form-select" asp-for="PersonelId">
+                <option value="">-- Seçiniz --</option>
+                @foreach (var p in Model.AllPersoneller)
+                {
+                    <option value="@p.PersonelId">@p.SicilNo - @p.AdSoyad</option>
+                }
+            </select>
+            <small class="form-text text-muted">Kullanıcı bir personele bağlanabilir</small>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-save"></i> Kaydet
+        </button>
+        <a class="btn btn-outline-secondary" asp-action="Index">
+            <i class="bi bi-x-circle"></i> İptal
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

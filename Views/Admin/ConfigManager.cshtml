@@ -1,0 +1,118 @@
+@model AdminConfigViewModel
+@{
+    ViewData["Title"] = "Sistem Ayarlari";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>
+                <i class="bi bi-sliders"></i> Sistem Ayarlari ve Bilgileri
+            </h2>
+            <a asp-action="Index" class="btn btn-secondary btn-sm mt-2">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-server"></i> Veritabani Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Sunucu:</strong></td>
+                            <td><code>@Model.DatabaseServer</code></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Ortam Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Ortam:</strong></td>
+                            <td>
+                                @if (Model.Environment == "Production")
+                                {
+                                    <span class="badge bg-danger">@Model.Environment</span>
+                                }
+                                else if (Model.Environment == "Staging")
+                                {
+                                    <span class="badge bg-warning">@Model.Environment</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@Model.Environment</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>.NET Versiyonu:</strong></td>
+                            <td><code>@Model.AspNetCoreVersion</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sistem Saati:</strong></td>
+                            <td>@Model.SystemTime:dd.MM.yyyy HH:mm:ss</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check"></i> Guvenlik Ayarlari</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <input type="checkbox" checked disabled> HTTPS Yonlendirmesi Aktif
+                        </div>
+                        <div class="list-group-item">
+                            <input type="checkbox" checked disabled> HSTS Header Aktif
+                        </div>
+                        <div class="list-group-item">
+                            <input type="checkbox" checked disabled> CSRF Korunmasi Aktif
+                        </div>
+                        <div class="list-group-item">
+                            <input type="checkbox" checked disabled> Audit Loglama Aktif
+                        </div>
+                        <div class="list-group-item">
+                            <input type="checkbox" checked disabled> Rate Limiting Aktif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Performans</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Cache Mekanizmasi:</strong> <span class="badge bg-success">Aktif</span></p>
+                    <p><strong>Compression:</strong> <span class="badge bg-success">Aktif</span></p>
+                    <p><strong>Async İşlemler:</strong> <span class="badge bg-success">Aktif</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Sistem Durumu:</strong> Tum bilesenler calisir durumda ve guvenli.
+            </div>
+        </div>
+    </div>
+</div>

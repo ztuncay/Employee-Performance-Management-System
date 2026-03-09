@@ -1,0 +1,141 @@
+@model List<dynamic>
+@{
+    ViewData["Title"] = "Bildirimler ve Uyar�lar";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2><i class="bi bi-bell"></i> Bildirimler ve Uyar�lar</h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-circle"></i> Etkin Uyar�lar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item border-start border-info border-5">
+                            <h6 class="mb-1">
+                                <i class="bi bi-info-circle text-info"></i> Sistem G�ncellemesi
+                            </h6>
+                            <p class="mb-1">Yeni versiyon 1.0.1 kullan�labilir durumda</p>
+                            <small class="text-muted">2 saat �nce</small>
+                        </div>
+
+                        <div class="list-group-item border-start border-warning border-5">
+                            <h6 class="mb-1">
+                                <i class="bi bi-exclamation-triangle text-warning"></i> G�venlik Uyar�s�
+                            </h6>
+                            <p class="mb-1">Anormal oturum a��l��lar� tespit edildi. 3 ba�ar�s�z deneme</p>
+                            <small class="text-muted">1 saat �nce</small>
+                        </div>
+
+                        <div class="list-group-item border-start border-danger border-5">
+                            <h6 class="mb-1">
+                                <i class="bi bi-exclamation-circle-fill text-danger"></i> Sistem Uyar�s�
+                            </h6>
+                            <p class="mb-1">Audit loglar� belle�i dolmak �zere. Acil temizleme �neriliyor</p>
+                            <small class="text-muted">Hemen �imdi</small>
+                        </div>
+
+                        <div class="list-group-item border-start border-success border-5">
+                            <h6 class="mb-1">
+                                <i class="bi bi-check-circle text-success"></i> Yedekleme Ba�ar�l�
+                            </h6>
+                            <p class="mb-1">G�nl�k yedekleme ba�ar�yla tamamland�. Boyut: 245 MB</p>
+                            <small class="text-muted">30 dakika �nce</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-alert"></i> G�venlik Bildirimleri</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <span class="badge bg-danger">Y�KSEK</span> 
+                            <strong>Brute Force Denemesi</strong> - IP: 192.168.1.100
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-warning">ORTA</span> 
+                            <strong>Yetkisiz Eri�im</strong> - Kullan�c�: test@firma.com
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-success">D���K</span> 
+                            <strong>�ifre De�i�imi</strong> - Kullan�c�: admin@firma.com
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-gear"></i> Sistem Bildirimleri</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-database"></i> Veritaban� yedeklemesi tamamland�
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-arrow-up-circle"></i> Sistem g�ncellemesi ba�ar�yla y�klendi
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle"></i> SSL sertifikas� g�ncellendi
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-gear-fill"></i> Bildirim Ayarlar�</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="secAlert" checked>
+                        <label class="form-check-label" for="secAlert">
+                            G�venlik Bildirimleri
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="sysAlert" checked>
+                        <label class="form-check-label" for="sysAlert">
+                            Sistem Bildirimleri
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="perfAlert" checked>
+                        <label class="form-check-label" for="perfAlert">
+                            Performans Uyar�lar�
+                        </label>
+                    </div>
+                    <button class="btn btn-primary">Ayarlar� Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

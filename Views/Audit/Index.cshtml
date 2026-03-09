@@ -1,0 +1,95 @@
+@model PerformansSitesi.Web.ViewModels.AuditListViewModel
+@{
+    ViewData["Title"] = "Audit Log";
+    int totalPages = (int)Math.Ceiling(Model.Total / (double)Model.PageSize);
+}
+
+<h4 class="mb-3">Audit Log</h4>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-md-4">
+        <label class="form-label">Arama</label>
+        <input class="form-control" name="arama" value="@Model.Arama" placeholder="Kullanıcı / Path / Not / IP" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">EventType</label>
+        <select class="form-select" name="eventType">
+            <option value="">(Tümü)</option>
+            <option value="Action" selected="@(Model.EventType == "Action")">Action</option>
+            <option value="Export" selected="@(Model.EventType == "Export")">Export</option>
+            <option value="Error" selected="@(Model.EventType == "Error")">Error</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Role</label>
+        <select class="form-select" name="role">
+            <option value="">(Tümü)</option>
+            <option value="Admin" selected="@(Model.Role == "Admin")">Admin</option>
+            <option value="IK" selected="@(Model.Role == "IK")">IK</option>
+            <option value="Yonetici1" selected="@(Model.Role == "Yonetici1")">Yonetici1</option>
+            <option value="Yonetici2" selected="@(Model.Role == "Yonetici2")">Yonetici2</option>
+            <option value="NihaiYonetici" selected="@(Model.Role == "NihaiYonetici")">NihaiYonetici</option>
+        </select>
+    </div>
+
+    <div class="col-md-2 d-grid">
+        <button class="btn btn-secondary" type="submit">Filtrele</button>
+    </div>
+</form>
+
+<div class="mb-2">
+    <span class="badge bg-light text-dark">Kayıt: @Model.Total</span>
+    <span class="badge bg-light text-dark">Sayfa: @Model.Page / @totalPages</span>
+</div>
+
+<table class="table table-sm table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:150px;">Tarih</th>
+            <th style="width:80px;">Tip</th>
+            <th>Kullanıcı</th>
+            <th style="width:90px;">Rol</th>
+            <th style="width:70px;">Method</th>
+            <th>Path</th>
+            <th style="width:120px;">IP</th>
+            <th>Not</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <tr>
+                <td>@r.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@r.EventType</td>
+                <td>@(r.UserName ?? "-")</td>
+                <td>@(r.UserRole ?? "-")</td>
+                <td>@r.Method</td>
+                <td>@r.Path</td>
+                <td>@(r.IpAddress ?? "-")</td>
+                <td>@(r.Note ?? "")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (totalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @{
+                int prev = Model.Page - 1;
+                int next = Model.Page + 1;
+            }
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", new { arama = Model.Arama, eventType = Model.EventType, role = Model.Role, page = prev })">Önceki</a>
+            </li>
+            <li class="page-item @(Model.Page >= totalPages ? "disabled" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", new { arama = Model.Arama, eventType = Model.EventType, role = Model.Role, page = next })">Sonraki</a>
+            </li>
+        </ul>
+    </nav>
+}

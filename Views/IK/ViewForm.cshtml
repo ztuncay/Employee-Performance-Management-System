@@ -1,0 +1,163 @@
+﻿@model PerformansSitesi.Web.ViewModels.IKFormViewModel
+@{
+    ViewData["Title"] = "İK Değerlendirme Görüntüleme";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">İK - Değerlendirme Görüntüleme</h4>
+
+    <div class="tooltip-wrap">
+        <div class="info-circle">i</div>
+        <div class="tooltip-box">
+            @Html.Raw(Model.RehberHtml)
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div><strong>Dönem:</strong> @Model.DonemAd</div>
+        <div><strong>Personel:</strong> @Model.PersonelAd</div>
+        <div><strong>Sicil No:</strong> @Model.SicilNo</div>
+        <div class="mt-2">
+            <span class="badge bg-secondary">Görevi: @Model.Gorev</span>
+            <span class="badge bg-secondary">Proje Adı: @Model.ProjeAdi</span>
+            <span class="badge bg-secondary">Müdürlük: @Model.Mudurluk</span>
+        </div>
+    </div>
+</div>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="DonemId" value="@Model.DonemId" />
+    <input type="hidden" name="PersonelId" value="@Model.PersonelId" />
+    <input type="hidden" name="DegerlendirmeId" value="@Model.DegerlendirmeId" />
+
+    <div class="card mb-3">
+        <div class="card-header">Performans Soruları (1. Yönetici Değerlendirmesi)</div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-sm align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:60%;">Soru</th>
+                        <th style="width:20%;">Değerlendirme Sonucu</th>
+                        <th style="width:20%;">1. Yönetici Yorumu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        string? grp = null;
+                    }
+                    @for (int i = 0; i < Model.Sorular.Count; i++)
+                    {
+                        var s = Model.Sorular[i];
+                        if (grp != s.Baslik)
+                        {
+                            grp = s.Baslik;
+                            <tr class="table-secondary">
+                                <td colspan="3"><strong>@grp</strong></td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td>
+                                <strong>@s.SiraNo.</strong> @s.TemizSoruMetni
+                                @if (s.ZorunluMu)
+                                {
+                                    <span class="badge bg-danger ms-1">Zorunlu</span>
+                                }
+                            </td>
+                            <td>
+                                @if (s.Yonetici1Puan.HasValue)
+                                {
+                                    if (s.Yonetici1Puan == 1)
+                                    {
+                                        <text>Beklenen Altı</text>
+                                    }
+                                    else if (s.Yonetici1Puan == 2)
+                                    {
+                                        <text>Beklenen</text>
+                                    }
+                                    else if (s.Yonetici1Puan == 3)
+                                    {
+                                        <text>Beklenen Üstü</text>
+                                    }
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                            </td>
+                            <td style="white-space:pre-wrap;">@s.Yonetici1Yorum</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Yönetici Notları</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">1. Yönetici Notu</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.Yonetici1Notu</textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">2. Yönetici Notu</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.Yonetici2Notu</textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Nihai Yönetici Notu</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.NihaiYoneticiNotu</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Değerlendirme Detayları</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Güçlü Yönler</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.GucluYonler</textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Gelişime Açık Yönler</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.GelisimeAcikYonler</textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Gelişim Önerileri</label>
+                    <textarea class="form-control" rows="4" readonly>@Model.GelisimOnerileri</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary">Genel Performans Sonucu</h5>
+                    <p class="mb-0">
+                        <strong>Sonuç:</strong> @(string.IsNullOrWhiteSpace(Model.GenelSonuc) ? "-" : Model.GenelSonuc)
+                        <br>
+                        <strong>Toplam Puan:</strong> @(Model.ToplamPuan.HasValue? Model.ToplamPuan.Value.ToString() : "-")
+                        <br>
+                        <strong>Durum:</strong> @Model.DurumMetni
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-dark" asp-action="Index" asp-route-donemId="@Model.DonemId">Listeye Dön</a>
+    </div>
+</form>

@@ -1,0 +1,86 @@
+@model List<PerformansSitesi.Domain.Entities.Kullanici>
+@{
+    ViewData["Title"] = "Kullanici Yonetimi";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>
+                <i class="bi bi-people-fill"></i> Kullanici Yonetimi
+            </h2>
+            <a asp-action="Index" class="btn btn-secondary btn-sm mt-2">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Sistem Kullanicilar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Kullanici Adi</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Durumu</th>
+                                    <th>Islemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td><small>@user.KullaniciId</small></td>
+                                        <td><strong>@user.AdSoyad</strong></td>
+                                        <td>@user.KullaniciAdi</td>
+                                        <td><small>@user.Email</small></td>
+                                        <td>
+                                            <span class="badge bg-info">@user.Rol</span>
+                                        </td>
+                                        <td>
+                                            @if (user.SifreHash == "[DISABLED]")
+                                            {
+                                                <span class="badge bg-danger">Devre Disi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <form asp-action="ToggleUserStatus" method="post" class="d-inline">
+                                                <input type="hidden" name="userId" value="@user.KullaniciId" />
+                                                @if (user.SifreHash != "[DISABLED]")
+                                                {
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu kullaniciya ait tum erisimi engelle?')">
+                                                        <i class="bi bi-lock"></i> Devre Disi Birak
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Bu kullanicinin erisimini acisiniz?')">
+                                                        <i class="bi bi-unlock"></i> Tekrar Aktif Et
+                                                    </button>
+                                                }
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

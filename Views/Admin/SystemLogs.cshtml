@@ -1,0 +1,142 @@
+@model AdminLogsViewModel
+@{
+    ViewData["Title"] = "Sistem Loglari";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2>
+                <i class="bi bi-file-earmark-text"></i> Sistem Loglari
+            </h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+            <form asp-action="ClearLogs" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tum loglari kalicilik olarak silmek isteyor musunuz?')">
+                    <i class="bi bi-trash"></i> Loglari Temizle
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <strong>Toplam Log:</strong> @Model.TotalLogs | <strong>Sayfa:</strong> @Model.CurrentPage / @Model.TotalPages
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Log Kayitlari</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Tarih Saat</th>
+                                    <th>Etkinlik</th>
+                                    <th>Kullanici</th>
+                                    <th>Rol</th>
+                                    <th>Method</th>
+                                    <th>Path</th>
+                                    <th>IP Adresi</th>
+                                    <th>Not</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var log in Model.Logs)
+                                {
+                                    <tr>
+                                        <td><small>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</small></td>
+                                        <td>
+                                            @if (log.EventType == "Error")
+                                            {
+                                                <span class="badge bg-danger">@log.EventType</span>
+                                            }
+                                            else if (log.EventType.Contains("Login"))
+                                            {
+                                                <span class="badge bg-success">@log.EventType</span>
+                                            }
+                                            else if (log.EventType.Contains("Warning"))
+                                            {
+                                                <span class="badge bg-warning">@log.EventType</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-info">@log.EventType</span>
+                                            }
+                                        </td>
+                                        <td><strong>@(log.UserName ?? "Anonim")</strong></td>
+                                        <td><small>@(log.UserRole ?? "N/A")</small></td>
+                                        <td><span class="badge bg-secondary">@log.Method</span></td>
+                                        <td><small>@log.Path</small></td>
+                                        <td><small>@log.IpAddress</small></td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(log.Note))
+                                            {
+                                                <small title="@log.Note">@log.Note.Substring(0, Math.Min(20, log.Note.Length))...</small>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="SystemLogs" asp-route-page="1">Ilk</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" asp-action="SystemLogs" asp-route-page="@(Model.CurrentPage - 1)">Onceki</a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <li class="page-item active">
+                                <span class="page-link">@i</span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="SystemLogs" asp-route-page="@i">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="SystemLogs" asp-route-page="@(Model.CurrentPage + 1)">Sonraki</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" asp-action="SystemLogs" asp-route-page="@Model.TotalPages">Son</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

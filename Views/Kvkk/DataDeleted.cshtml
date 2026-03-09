@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Veriler Silindi";
+    Layout = "_LoginLayout";
+}
+
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0"><i class="bi bi-check-circle"></i> Verileriniz Ba�ar�yla Silindi</h4>
+    </div>
+    <div class="card-body">
+        <p>Ki�isel verileriniz KVKK Madde 11/d gere�i sistemden anonimle�tirildi.</p>
+        <p>��lem detaylar�:</p>
+        <ul>
+            <li>? Kimlik bilgileri anonimle�tirildi</li>
+            <li>? Performans notlar� silindi</li>
+            <li>? Hesap kapat�ld�</li>
+        </ul>
+
+        <p class="mt-4">
+            Herhangi bir sorunuz varsa KVKK sorumlusu ile ileti�ime ge�ebilirsiniz:<br>
+            <strong>E-posta:</strong> kvkk@sirketiniz.com
+        </p>
+
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+            Ana Sayfaya D�n
+        </a>
+    </div>
+</div>

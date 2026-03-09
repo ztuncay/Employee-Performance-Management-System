@@ -1,0 +1,94 @@
+﻿@model List<PerformansSitesi.Domain.Entities.Kullanici>
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+    var arama = (string?)ViewBag.Arama;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="m-0"><i class="bi bi-people"></i> Kullanıcı Yönetimi</h4>
+    <div>
+        <a class="btn btn-success me-2" asp-action="Import">
+            <i class="bi bi-file-excel"></i> Excel İle İçe Aktar
+        </a>
+        <a class="btn btn-primary" asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Yeni Kullanıcı
+        </a>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-10">
+        <input class="form-control" name="arama" value="@arama" placeholder="Ad Soyad / Kullanıcı Adı / Email ile ara..." />
+    </div>
+    <div class="col-md-2 d-grid">
+        <button class="btn btn-secondary" type="submit">
+            <i class="bi bi-search"></i> Ara
+        </button>
+    </div>
+</form>
+
+<table class="table table-sm table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Ad Soyad</th>
+            <th>Kullanıcı Adı</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th style="width:280px;">İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    <i class="bi bi-inbox"></i> Kullanıcı bulunamadı
+                </td>
+            </tr>
+        }
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.AdSoyad</td>
+                <td>@u.KullaniciAdi</td>
+                <td>@u.Email</td>
+                <td>
+                    @{
+                        var badgeClass = u.Rol.ToString() == "SistemAdmin" ? "bg-danger" :
+                        u.Rol.ToString() == "Admin" ? "bg-primary" :
+                        "bg-secondary";
+                    }
+                    <span class="badge @badgeClass">@u.Rol</span>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-route-id="@u.KullaniciId" title="Düzenle">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a class="btn btn-sm btn-warning" asp-action="ChangePassword" asp-route-id="@u.KullaniciId" title="Şifre Değiştir">
+                        <i class="bi bi-key"></i>
+                    </a>
+
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@u.KullaniciId" />
+                        <button class="btn btn-sm btn-danger"
+                                type="submit"
+                                title="Sil"
+                                onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?');">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="alert alert-info mt-3">
+    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Bilgi</h6>
+    <ul class="mb-0">
+        <li><strong>Toplam Kullanıcı:</strong> @Model.Count</li>
+        <li><strong>Excel İçe Aktarma:</strong> Toplu kullanıcı eklemek için "Excel İle İçe Aktar" butonunu kullanın</li>
+        <li><strong>Format:</strong> Ad Soyad, Kullanıcı Adı, Email, Rol (Yonetici1, Yonetici2, NihaiYonetici, IK, Admin, SistemAdmin)</li>
+    </ul>
+</div>

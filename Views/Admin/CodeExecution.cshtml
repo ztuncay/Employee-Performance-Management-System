@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Kod Calistir";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>
+                <i class="bi bi-code-square"></i> Sistem Komutu Calistir
+            </h2>
+            <a asp-action="DatabaseManager" class="btn btn-secondary btn-sm mt-2">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <strong><i class="bi bi-exclamation-triangle"></i> DIKKAT!</strong>
+                Bu sayfa sisteme dusmesine neden olabilecek ozel komutlarin calistirilmasi icindir.
+                Sadece Sistem Admin tarafindan kullanilmalidir.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-terminal"></i> Komut Girisi</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="ExecuteSystemCommand" method="post">
+                        <div class="mb-3">
+                            <label for="command" class="form-label"><strong>Komut:</strong></label>
+                            <textarea class="form-control font-monospace" id="command" name="command" rows="6" required></textarea>
+                            <small class="form-text text-muted">
+                                <br>Temel SQL komutlari ve sistem isleri calistirilabilir.
+                                <br><strong style="color: red;">UYARI:</strong> DROP, DELETE FROM, TRUNCATE gibi tehlikeli komutlar otomatik olarak bloklaniyor.
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Bu komutu calistirmak istediginiz kesin misiniz?')">
+                            <i class="bi bi-play-fill"></i> Komutu Calistir
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-list"></i> Ornek Komutlar</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Kullanici Listesi:</strong></p>
+                    <code class="text-break">SELECT * FROM Kullanicilar</code>
+
+                    <hr>
+
+                    <p><strong>Personel Sayisi:</strong></p>
+                    <code class="text-break">SELECT COUNT(*) FROM Personeller</code>
+
+                    <hr>
+
+                    <p><strong>Son Loglar:</strong></p>
+                    <code class="text-break">SELECT TOP 10 * FROM AuditLogs ORDER BY CreatedAt DESC</code>
+                </div>
+            </div>
+
+            @if (ViewBag.Success != null)
+            {
+                <div class="card mt-3 @(ViewBag.Success ? "border-success" : "border-danger")">
+                    <div class="card-header @(ViewBag.Success ? "bg-success" : "bg-danger") text-white">
+                        <h5 class="mb-0">@(ViewBag.Success ? "Basarili" : "Hata")</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0">@ViewBag.Result</pre>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

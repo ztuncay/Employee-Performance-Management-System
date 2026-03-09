@@ -1,0 +1,129 @@
+@using System.IO
+@model List<string>
+@{
+    ViewData["Title"] = "Yedekleme Yonetimi";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2><i class="bi bi-archive"></i> Yedekleme Yonetimi</h2>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle"></i> Yeni Yedek Olustur
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateBackup" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-download"></i> Hemen Yedek Al
+                        </button>
+                    </form>
+                    <small class="text-muted d-block mt-2">
+                        Sistem verileri JSON formatinda yedeklenecek (Kullanicilar, Personel, Degerlendirmeler, Loglar)
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list"></i> Mevcut Yedeklemeler (@Model.Count)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Yedek Dosyasi</th>
+                                        <th>Olusturma Tarihi</th>
+                                        <th>Boyut</th>
+                                        <th>Islemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var backup in Model)
+                                    {
+                                        var filePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Backups", backup);
+                                        var fileInfo = new FileInfo(filePath);
+                                        var createdDate = fileInfo.CreationTime;
+
+                                        <tr>
+                                            <td>
+                                                <i class="bi bi-file-earmark"></i> @backup
+                                            </td>
+                                            <td>
+                                                @createdDate.ToString("dd.MM.yyyy HH:mm:ss")
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    @(fileInfo.Length / 1024) KB
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="/Backups/@backup" class="btn btn-primary btn-sm" download>
+                                                    <i class="bi bi-download"></i> Indir
+                                                </a>
+                                                <form asp-action="DeleteBackup" method="post" class="d-inline">
+                                                    <input type="hidden" name="filename" value="@backup" />
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yedegi sil?')">
+                                                        <i class="bi bi-trash"></i> Sil
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Henuz yedekleme yapilmadi.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Onemli Bilgiler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Yedeklemeler <code>Backups</code> klasorunde saklanir</li>
+                        <li>Her yedekleme yaklasik olarak tum sistem verilerini iceren JSON dosyasidir</li>
+                        <li>Buyuk sistemlerde yedekleme islemi uzun surebilir</li>
+                        <li>Eski yedeklemeleri duzenli olarak silin</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
