@@ -53,13 +53,13 @@ PerformansSitesi icin gelistirilmis kapsamli, cok asamali performans degerlendir
 
 **ONEMLI:** Bu proje script kullanmaz!
 
-### ❌ KULLANILMAYAN TEKNOLOJILER
-- ❌ PowerShell (.ps1) - 0 dosya
-- ❌ Bash (.sh) - 0 dosya
-- ❌ Python (.py) - 0 dosya (YASAKLANMIS)
-- ❌ SQL Scripts (.sql) - 0 dosya
+###   KULLANILMAYAN TEKNOLOJILER
+-   PowerShell (.ps1) - 0 dosya
+-   Bash (.sh) - 0 dosya
+-   Python (.py) - 0 dosya (YASAKLANMIS)
+-   SQL Scripts (.sql) - 0 dosya
 
-### ✅ ALTERNATIF YONTEMLER
+###   ALTERNATIF YONTEMLER
 - **Deployment:** Visual Studio Publish
 - **Database Migration:** Entity Framework Core Tools
 - **Yapılandirma:** appsettings.json
@@ -237,15 +237,15 @@ Sistem icinde **dinamik kilavuz sayfasi** vardir:
 ## GUVENLIK
 
 ### Uygulanan Guvenlik Tedbirleri
-- ✅ HTTPS zorunlu
-- ✅ Cookie authentication (30dk timeout)
-- ✅ Anti-forgery tokens
-- ✅ Rate limiting (100 req/dk)
-- ✅ Audit logging
-- ✅ Password hashing (bcrypt)
-- ✅ HSTS aktif
-- ✅ XSS protection headers
-- ✅ CSRF protection
+-   HTTPS zorunlu
+-   Cookie authentication (30dk timeout)
+-   Anti-forgery tokens
+-   Rate limiting (100 req/dk)
+-   Audit logging
+-   Password hashing (bcrypt)
+-   HSTS aktif
+-   XSS protection headers
+-   CSRF protection
 
 ### KVKK Uyumu
 - Kullanici onaylari
@@ -284,18 +284,7 @@ Detayli aciklama (opsiyonel)
 
 ---
 
-## DESTEK
-
-**IT Destek:** it@example.com  
 **Gelistirici:** Zeynep Tuncay
 
----
-
-## LISANS
-
-© 2026 PerformansSitesi  
-Dahili kullanim - Ticari olmayan
-
----
-
 **SON NOT:** Bu proje **tamamen .NET/C# stack** uzerine kurulu, **script kullanmayan**, modern bir ASP.NET Core web uygulamasidir. Tum islemler Visual Studio ve Entity Framework Tools ile yapilir.
+
